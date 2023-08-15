@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JSCodePlayground</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/theme/dracula.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    #editor {
+      height: 200px;
+    }
+    #input {
+      margin-top: 20px;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+      white-space: pre-wrap;
+      resize: vertical; /* Resizable output section */
+      max-height: 300px;
+      overflow: auto;
+    }
+    button {
+      margin-top: 10px;
+    }
+    #toggleDarkMode {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>JSCodePlayground</h1>
+  <div id="editor"></div>
+  <div id="input">
+    <h2>Input:</h2>
+    <textarea id="inputArea" rows="4" cols="50"></textarea>
+  </div>
+  <button id="runButton">Run</button>
+  <button id="clearButton">Clear Output</button>
+  <button id="saveButton">Save Code</button>
+  <button id="loadButton">Load Code</button>
+  <div id="output"></div>
+  <button id="toggleDarkMode">Toggle Dark Mode</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/mode/javascript/javascript.min.js"></script>
+  <script>
+    // Function to run the user's code and display the output
+    function runCode() {
+      const userCode = editor.getValue();
+      const userInput = document.getElementById("inputArea").value;
+      try {
+        const result = eval(`(function() { ${userCode} })()`)(userInput);
+        displayOutput(result);
+      } catch (error) {
+        displayOutputError(error);
+      }
+    }
+
+    // Function to display the output of the user's code
+    function displayOutput(output) {
+      const outputElement = document.getElementById("output");
+      outputElement.innerHTML = `<h2>Output:</h2><pre>${output}</pre>`;
+    }
+
+    // Function to display an error if the user's code encounters an error
+    function displayOutputError(error) {
+      const outputElement = document.getElementById("output");
+      outputElement.innerHTML = `<h2>Error:</h2><pre style="color: red;">${error}</pre>`;
+    }
+
+    // Function to clear the output
+    function clearOutput() {
+      const outputElement = document.getElementById("output");
+      outputElement.innerHTML = "";
+    }
+
+    // Function to save the code to local storage
+    function saveCode() {
+      localStorage.setItem("userCode", editor.getValue());
+      alert("Code saved!");
+    }
+
+    // Function to load the code from local storage
+    function loadCode() {
+      const savedCode = localStorage.getItem("userCode");
+      if (savedCode) {
+        editor.setValue(savedCode);
+        alert("Code loaded!");
+      } else {
+        alert("No saved code found.");
+      }
+    }
+
+    // Function to toggle dark mode
+    function toggleDarkMode() {
+      const body = document.body;
+      body.classList.toggle("dark-mode");
+    }
+
+    // Initialize the code editor
+    const editor = CodeMirror(document.getElementById("editor"), {
+      value: "// Write your JavaScript code here\nconsole.log('Hello, JSCodePlayground!');",
+      mode: "javascript",
+      theme: "dracula",
+      lineNumbers: true,
+      tabSize: 2,
+    });
+
+    // Event listener for the "Run" button
+    document.getElementById("runButton").addEventListener("click", runCode);
+
+    // Event listener for the "Clear" button
+    document.getElementById("clearButton").addEventListener("click", clearOutput);
+
+    // Event listener for the "Save Code" button
+    document.getElementById("saveButton").addEventListener("click", saveCode);
+
+    // Event listener for the "Load Code" button
+    document.getElementById("loadButton").addEventListener("click", loadCode);
+
+    // Event listener for the "Toggle Dark Mode" button
+    document.getElementById("toggleDarkMode").addEventListener("click", toggleDarkMode);
+  </script>
+</body>
+</html>
